@@ -6,7 +6,7 @@
 /*   By: tochaves <tochaves@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 11:56:54 by tochaves          #+#    #+#             */
-/*   Updated: 2026/05/06 16:28:47 by tochaves         ###   ########.fr       */
+/*   Updated: 2026/05/07 17:36:01 by tochaves         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,11 @@
 
 static char	*read_and_stach(int fd, char *stash)
 {
-	char	buffer[BUFFER_SIZE + 1];
+	char	*buffer;
 	int		bytes_read;
 	char	*temp;
 
+	buffer = malloc(BUFFER_SIZE + 1);
 	bytes_read = read(fd, buffer, BUFFER_SIZE);
 	while (bytes_read > 0)
 	{
@@ -29,7 +30,8 @@ static char	*read_and_stach(int fd, char *stash)
 			break ;
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 	}
-	if (bytes_read <= 0)
+	free(buffer);
+	if (bytes_read < 0)
 	{
 		free(stash);
 		return (NULL);
@@ -44,8 +46,14 @@ static char	*extract_line(char **stash)
 	char	*newline;
 	size_t	len;
 
-	len = 0;
 	newline = ft_strchr(*stash, '\n');
+	if(!newline)
+	{
+		line = ft_substr(*stash, 0, ft_strlen(*stash));
+		free(*stash);
+		*stash = NULL;
+		return(line);
+	}
 	len = newline - *stash + 1;
 	line = ft_substr(*stash, 0, len);
 	newstash = ft_substr(*stash, len, ft_strlen(*stash) - len);
