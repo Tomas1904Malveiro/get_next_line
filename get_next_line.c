@@ -6,7 +6,7 @@
 /*   By: tochaves <tochaves@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 11:56:54 by tochaves          #+#    #+#             */
-/*   Updated: 2026/05/07 17:36:01 by tochaves         ###   ########.fr       */
+/*   Updated: 2026/05/08 17:50:02 by tochaves         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,12 +47,12 @@ static char	*extract_line(char **stash)
 	size_t	len;
 
 	newline = ft_strchr(*stash, '\n');
-	if(!newline)
+	if (!newline)
 	{
 		line = ft_substr(*stash, 0, ft_strlen(*stash));
 		free(*stash);
 		*stash = NULL;
-		return(line);
+		return (line);
 	}
 	len = newline - *stash + 1;
 	line = ft_substr(*stash, 0, len);
