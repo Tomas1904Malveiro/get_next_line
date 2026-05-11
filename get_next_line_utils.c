@@ -6,7 +6,7 @@
 /*   By: tochaves <tochaves@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/05/05 10:35:19 by tochaves          #+#    #+#             */
-/*   Updated: 2026/05/06 12:33:58 by tochaves         ###   ########.fr       */
+/*   Updated: 2026/05/11 17:35:30 by tochaves         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,24 +69,51 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_substr(char *s, unsigned int start, size_t len)
+char	*read_and_stach(int fd, char *stash)
 {
-	size_t	i;
-	char	*copy;
+	char	*buffer;
+	int		bytes_read;
+	char	*temp;
 
-	i = 0;
-	if (!s)
-		return (NULL);
-	if (start >= ft_strlen(s))
-		len = 0;
-	else if (start + len > ft_strlen(s))
-		len = ft_strlen(s) - start;
-	copy = malloc(len + 1);
-	while (i < len)
+	buffer = malloc(BUFFER_SIZE + 1);
+	bytes_read = read(fd, buffer, BUFFER_SIZE);
+	while (bytes_read > 0)
 	{
-		copy[i] = s[start + i];
-		i++;
+		buffer[bytes_read] = '\0';
+		temp = stash;
+		stash = ft_strjoin(stash, buffer);
+		free(temp);
+		if (ft_strchr(stash, '\n'))
+			break ;
+		bytes_read = read(fd, buffer, BUFFER_SIZE);
 	}
-	copy[i] = '\0';
-	return (copy);
+	free(buffer);
+	if (bytes_read < 0)
+	{
+		free(stash);
+		return (NULL);
+	}
+	return (stash);
+}
+
+char	*extract_line(char **stash)
+{
+	char	*line;
+	char	*newstash;
+	char	*newline;
+
+	newline = ft_strchr(*stash, '\n');
+	if (!newline)
+	{
+		line = ft_strjoin(*stash, "");
+		free(*stash);
+		*stash = NULL;
+		return (line);
+	}
+	*newline = '\0';
+	line = ft_strjoin(*stash, "\n");
+	newstash = ft_strjoin(newline + 1, "");
+	free(*stash);
+	*stash = newstash;
+	return (line);
 }
